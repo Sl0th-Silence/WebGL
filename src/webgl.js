@@ -1,3 +1,9 @@
+import { initBuffers } from "./init-buffers.js";
+import { drawScene } from "./draw-scene.js";
+
+let squareRotation = 0.0;
+let deltaTime = 0;
+
 main();
 
 function main()
@@ -18,11 +24,26 @@ function main()
     //Vertext Shader 
     const vsSource = `
         attribute vec4 aVertexPosition;
+        attribute vec4 aVertexColor;
+
         uniform mat4 uModelViewMatrix;
         uniform mat4 uProjectionMatrix;
+
+        varying lowp vec4 vColor;
+
         void main() {
-            gl_position = uProjectionMatrix * uModelViewMatrix *
+            gl_Position = uProjectionMatrix * uModelViewMatrix *
                 aVertexPosition;
+            vColor = aVertexColor;
+        }
+    `;
+
+    //Fragment Shader
+    const fsSource = `
+        varying lowp vec4 vColor;
+
+        void main() {
+            gl_FragColor = vColor;
         }
     `;
 
@@ -37,26 +58,38 @@ function main()
         attribLocations: {
             vertexPosition: gl.getAttribLocation(shaderProgram,
                 "aVertexPosition"),
+            vertexColor: gl.getAttribLocation(shaderProgram,
+                "aVertexColor"),
         },
         uniformLocations: {
-            projectMatrix: gl.getUniformLocation(shaderProgram,
+            projectionMatrix: gl.getUniformLocation(shaderProgram,
             "uProjectionMatrix"),
          modelViewMatrix: gl.getUniformLocation(shaderProgram,
             "uModelViewMatrix"),
         },
     };
 
-    //Fragment Shader
-    const fsSource = `
-        void main() {
-            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-        }
-    `;
-
     //Set color black
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     //clear buffer
     gl.clear(gl.COLOR_BUFFER_BIT);
+
+    const buffers = initBuffers(gl);
+    let then = 0;
+
+    //draw repeatedly
+    function render(now)
+    {
+        now *= 0.001; //convert to seconds
+        deltaTime = now - then;
+        then = now;
+
+        drawScene(gl, programInfo, buffers, squareRotation);
+        squareRotation += deltaTime;
+
+        requestAnimationFrame(render);
+    }
+    requestAnimationFrame(render);
 }    
 
 //Initialize a shader program
