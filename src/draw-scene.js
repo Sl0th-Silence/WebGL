@@ -1,4 +1,4 @@
-function drawScene(gl, programInfo, buffers, squareRotation)
+function drawScene(gl, programInfo, buffers, cubeRotation)
 {
     //Clear to black with alpha of 1
     gl.clearColor(0.0, 0.0, 0.0, 1.0)
@@ -39,19 +39,36 @@ function drawScene(gl, programInfo, buffers, squareRotation)
         [-0.0, 0.0, -6.0], //Amount to translate
     );
 
-    //Rotate the square!
-    mat4.rotate(
-        modelViewMatrix, //destination
-        modelViewMatrix, //to be rotated
-        squareRotation, // amount to rotate in radians
-        [0, 0, 1] //Axis to rotate on
-    )
+    //Rotate the cube!
+mat4.rotate(
+  modelViewMatrix, // destination matrix
+  modelViewMatrix, // matrix to rotate
+  cubeRotation, // amount to rotate in radians
+  [0, 0, 1],
+); // axis to rotate around (Z)
+
+mat4.rotate(
+  modelViewMatrix, // destination matrix
+  modelViewMatrix, // matrix to rotate
+  cubeRotation * 0.7, // amount to rotate in radians
+  [0, 1, 0],
+); // axis to rotate around (Y)
+
+mat4.rotate(
+  modelViewMatrix, // destination matrix
+  modelViewMatrix, // matrix to rotate
+  cubeRotation * 0.3, // amount to rotate in radians
+  [1, 0, 0],
+); // axis to rotate around (X)
+
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute.
     setPositionAttribute(gl, buffers, programInfo);
     //Use colors!
     setColorAttribute(gl, buffers, programInfo);
+    //Tell which indices to use to index the vertices
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
     //Tell webGL to use our prog when drawing
     gl.useProgram(programInfo.program);
 
@@ -68,9 +85,10 @@ function drawScene(gl, programInfo, buffers, squareRotation)
     );
 
     {
-        const offset = 0;
-        const vertexCount = 4;
-        gl.drawArrays(gl.TRIANGLE_STRIP, offset, vertexCount);
+    const vertexCount = 36;
+    const type = gl.UNSIGNED_SHORT;
+    const offset = 0;
+    gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
     }
 }
 
@@ -78,7 +96,7 @@ function drawScene(gl, programInfo, buffers, squareRotation)
 // buffer into the vertexPosition attribute.
 function setPositionAttribute(gl, buffers, programInfo)
 {
-    const numComponents = 2; //pull out 2 values per iteration
+    const numComponents = 3; //pull out 2 values per iteration
     const type = gl.FLOAT; //the data in the buffer is 32bit floats
     const normalize = false; 
     const stride = 0; //how many bytes to get from one set of values to the next. 0 = use type and numComponents above
