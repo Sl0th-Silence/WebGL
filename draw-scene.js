@@ -61,6 +61,11 @@ function drawScene(gl, programInfo, buffers, texture, cubeRotation)
         [1, 0, 0],
         ); // axis to rotate around (X)
 
+        //update code that builds uniform matrices to generate and give the shader a normal matrix
+        //which is used to transform the normals appropriately to the orientation to the light souce
+    const normalMatrix = mat4.create();
+    mat4.invert(normalMatrix, modelViewMatrix);
+    mat4.transpose(normalMatrix, normalMatrix);
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute.
@@ -72,6 +77,8 @@ function drawScene(gl, programInfo, buffers, texture, cubeRotation)
 
     //Tell which indices to use to index the vertices
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
+    //Setnormals
+    setNormalAttribute(gl, buffers, programInfo);
     //Tell webGL to use our prog when drawing
     gl.useProgram(programInfo.program);
 
@@ -87,6 +94,12 @@ function drawScene(gl, programInfo, buffers, texture, cubeRotation)
         modelViewMatrix,
     );
 
+    gl.uniformMatrix4fv(
+        programInfo.uniformLocations.normalMatrix,
+        false,
+        normalMatrix,
+    );
+    
     //Tell webgl we want to affect tex unit 0
     gl.activeTexture(gl.TEXTURE0);
     //bind tex to tex0
@@ -165,4 +178,23 @@ function setTextureAttribute(gl, buffers, programInfo)
     gl.enableVertexAttribArray(programInfo.attribLocations.textureCoord);
 }
 
+//How to pull out the normals from the buffer into the vertexNormal attribute
+function setNormalAttribute(gl, buffers, programInfo)
+{
+    const numComponents = 3;
+    const type = gl.FLOAT;
+    const normalize = false;
+    const stride = 0;
+    const offset = 0;
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.normal);
+    gl.vertexAttribPointer(
+        programInfo.attribLocations.vertexNormal,
+        numComponents,
+        type,
+        normalize,
+        stride,
+        offset,
+    );
+    gl.enableVertexAttribArray(programInfo.attribLocations.vertexNormal);
+}
 export {drawScene};
