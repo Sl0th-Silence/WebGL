@@ -4,7 +4,16 @@ import { drawScene } from "./draw-scene.js";
 let squareRotation = 0.0;
 let cubeRotation = 0.0;
 let deltaTime = 0;
+let XRotation = 0;
+let YRotation = 0;
+let ZRotation = 0;
 
+let distanceFromCamera = 0;
+
+let priorX = 0;
+let priorY = 0;
+
+let isMouseDown = false;
 main();
 
 function main()
@@ -21,6 +30,58 @@ function main()
         );
         return;
     }
+
+    //Mouse inputs
+    canvas.addEventListener("pointermove", mouseMove, false);
+    canvas.addEventListener("pointerdown", mouseDown, false);
+    canvas.addEventListener("mousewheel", mouseWheel, false);
+    canvas.addEventListener("pointerup", mouseUp, false);
+
+    function mouseDown(event)
+    {
+        isMouseDown = true;
+        priorX = event.clientX;
+        priorY = event.clientY;
+
+        //console.log(event)
+    }
+
+    function mouseUp()
+    {
+        isMouseDown = false;
+    }
+
+    //x and y is a little bass awkwards
+    function mouseMove(event)
+    {
+        if(!isMouseDown)
+        {
+            return;
+        }
+
+        const deltaX = event.clientX - priorX;
+        const deltaY = event.clientY - priorY;
+
+        XRotation += deltaX * 0.01;
+        YRotation += deltaY * 0.01;
+
+        priorX = event.clientX;
+        priorY = event.clientY;
+    }
+
+    function mouseWheel(event)
+    {
+        //move cube close and far
+        if (event.deltaY < 0)
+        {
+            distanceFromCamera++;
+        }
+        else if (event.deltaY > 0) 
+        {
+            distanceFromCamera--;
+        }
+    }
+
 
     //Vertex Shader 
     const vsSource = `
@@ -110,9 +171,7 @@ function main()
         deltaTime = now - then;
         then = now;
 
-        drawScene(gl, programInfo, buffers, texture, cubeRotation);
-        cubeRotation += deltaTime;
-
+        drawScene(gl, programInfo, buffers, texture, XRotation, YRotation, ZRotation, distanceFromCamera);
         requestAnimationFrame(render);
     }
     requestAnimationFrame(render);

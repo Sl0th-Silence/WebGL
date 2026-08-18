@@ -1,3 +1,4 @@
+
 function initBuffers(gl)
 {
     const positionBuffer = initPositionBuffer(gl);
