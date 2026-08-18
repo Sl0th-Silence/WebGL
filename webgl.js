@@ -8,13 +8,23 @@ let XRotation = 0;
 let YRotation = 0;
 let ZRotation = 0;
 
-let distanceFromCamera = 0;
+let distanceFromCamera = -5;
 
 let priorX = 0;
 let priorY = 0;
 
 let isMouseDown = false;
+let isPlayingMusic = false;
 main();
+//On play music from HTML
+window.onPlayMusic = function () 
+{
+    isPlayingMusic = true;
+}
+window.onPauseMusic = function () 
+{
+    isPlayingMusic = false;
+}
 
 function main()
 {
@@ -171,7 +181,11 @@ function main()
         deltaTime = now - then;
         then = now;
 
-        drawScene(gl, programInfo, buffers, texture, XRotation, YRotation, ZRotation, distanceFromCamera);
+        drawScene(gl, programInfo, buffers, texture, cubeRotation, XRotation, YRotation, ZRotation, distanceFromCamera, isPlayingMusic);
+        if(isPlayingMusic)
+        {
+            cubeRotation += deltaTime;
+        }
         requestAnimationFrame(render);
     }
     requestAnimationFrame(render);

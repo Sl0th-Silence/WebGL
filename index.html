@@ -14,6 +14,55 @@
     <script src="./webgl.js" type="module"></script>
 </head>
 <body>
-    <canvas id="gl-canvas" width="1000" height="700"></canvas>
+    <canvas id="gl-canvas" width="750" height="500"></canvas>
+
+    <h1>The Cube!</h1>
+    <h3>Controls:</h3>
+    <ul>
+        <li>Click and drag to rotate cube</li>
+        <li>If using a mouse, use the mouse wheel to zoom in and out</li>
+    </ul>
+
+    <!-- youtube player -->
+     <div id="player" ></div>
+
+     <!-- buttons for player -->
+      <button onclick="playVideo(), onPlayMusic()">|> Play</button>
+      <button onclick="pauseVideo(), onPauseMusic()">|| Pause</button>
+
+      <script>
+        let tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(tag);
+
+        let player;
+
+        //Player for youtube API
+        function onYouTubeIframeAPIReady(){
+            player = new YT.Player('player', {
+            height: '0',
+            width: '0',
+            videoId: 'Y6ljFaKRTrI',
+            playerVars: {
+                'playsinline': 1,
+                'start': 8
+            }
+        });
+        }
+        //Play
+        function playVideo()
+        {
+            console.log("play")
+            player.playVideo();
+        }
+
+        //pause
+        function pauseVideo()
+        {
+            console.log("pause")
+            player.pauseVideo();
+        }
+
+      </script>
 </body>
 </html>

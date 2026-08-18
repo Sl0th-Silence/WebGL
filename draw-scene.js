@@ -1,4 +1,4 @@
-function drawScene(gl, programInfo, buffers, texture, XRotation, YRotation, ZRotation, distanceFromCamera)
+function drawScene(gl, programInfo, buffers, texture, cubeRotation, XRotation, YRotation, ZRotation, distanceFromCamera, isPlayingMusic)
 {
     //Clear to black with alpha of 1
     gl.clearColor(0.0, 0.0, 0.0, 1.0)
@@ -43,21 +43,21 @@ function drawScene(gl, programInfo, buffers, texture, XRotation, YRotation, ZRot
     mat4.rotate(
         modelViewMatrix, // destination matrix
         modelViewMatrix, // matrix to rotate
-        0, // amount to rotate in radians
+        isPlayingMusic ? cubeRotation * 1 : cubeRotation, // amount to rotate in radians
         [0, 0, 1],
         ); // axis to rotate around (Z)
 
     mat4.rotate(
         modelViewMatrix, // destination matrix
         modelViewMatrix, // matrix to rotate
-        XRotation, // amount to rotate in radians
+        isPlayingMusic ? cubeRotation * 0.5 : XRotation, // amount to rotate in radians
         [0, 1, 0],
         ); // axis to rotate around (Y)
 
     mat4.rotate(
         modelViewMatrix, // destination matrix
         modelViewMatrix, // matrix to rotate
-        YRotation, // amount to rotate in radians
+        isPlayingMusic ? cubeRotation * 2 : YRotation, // amount to rotate in radians
         [1, 0, 0],
         ); // axis to rotate around (X)
 
