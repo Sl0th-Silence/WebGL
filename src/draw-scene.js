@@ -1,4 +1,4 @@
-function drawScene(gl, programInfo, buffers, cubeRotation)
+function drawScene(gl, programInfo, buffers, texture, cubeRotation)
 {
     //Clear to black with alpha of 1
     gl.clearColor(0.0, 0.0, 0.0, 1.0)
@@ -40,33 +40,36 @@ function drawScene(gl, programInfo, buffers, cubeRotation)
     );
 
     //Rotate the cube!
-mat4.rotate(
-  modelViewMatrix, // destination matrix
-  modelViewMatrix, // matrix to rotate
-  cubeRotation, // amount to rotate in radians
-  [0, 0, 1],
-); // axis to rotate around (Z)
+    mat4.rotate(
+        modelViewMatrix, // destination matrix
+        modelViewMatrix, // matrix to rotate
+        cubeRotation, // amount to rotate in radians
+        [0, 0, 1],
+        ); // axis to rotate around (Z)
 
-mat4.rotate(
-  modelViewMatrix, // destination matrix
-  modelViewMatrix, // matrix to rotate
-  cubeRotation * 0.7, // amount to rotate in radians
-  [0, 1, 0],
-); // axis to rotate around (Y)
+    mat4.rotate(
+        modelViewMatrix, // destination matrix
+        modelViewMatrix, // matrix to rotate
+        cubeRotation * 0.7, // amount to rotate in radians
+        [0, 1, 0],
+        ); // axis to rotate around (Y)
 
-mat4.rotate(
-  modelViewMatrix, // destination matrix
-  modelViewMatrix, // matrix to rotate
-  cubeRotation * 0.3, // amount to rotate in radians
-  [1, 0, 0],
-); // axis to rotate around (X)
+    mat4.rotate(
+        modelViewMatrix, // destination matrix
+        modelViewMatrix, // matrix to rotate
+        cubeRotation * 0.3, // amount to rotate in radians
+        [1, 0, 0],
+        ); // axis to rotate around (X)
 
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute.
     setPositionAttribute(gl, buffers, programInfo);
     //Use colors!
-    setColorAttribute(gl, buffers, programInfo);
+    //setColorAttribute(gl, buffers, programInfo);
+    //Texures
+    setTextureAttribute(gl, buffers, programInfo);
+
     //Tell which indices to use to index the vertices
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
     //Tell webGL to use our prog when drawing
@@ -83,6 +86,13 @@ mat4.rotate(
         false,
         modelViewMatrix,
     );
+
+    //Tell webgl we want to affect tex unit 0
+    gl.activeTexture(gl.TEXTURE0);
+    //bind tex to tex0
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    //Tell shader what we did
+    gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
 
     {
     const vertexCount = 36;
@@ -134,6 +144,25 @@ function setColorAttribute(gl, buffers, programInfo)
     );
 
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor);
+}
+
+function setTextureAttribute(gl, buffers, programInfo)
+{
+    const num = 2; //coords
+    const type = gl.FLOAT; //data is 32-bit float
+    const normalize = false; 
+    const stride = 0;
+    const offset = 0;
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.texture);
+    gl.vertexAttribPointer(
+        programInfo.attribLocations.textureCoord,
+        num,
+        type,
+        normalize,
+        stride,
+        offset,
+    );
+    gl.enableVertexAttribArray(programInfo.attribLocations.textureCoord);
 }
 
 export {drawScene};
