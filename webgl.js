@@ -16,7 +16,7 @@ let priorY = 0;
 let isMouseDown = false;
 let isPlayingMusic = false;
 main();
-//On play music from HTML
+//On play, pause music and restart from HTML
 window.onPlayMusic = function () 
 {
     isPlayingMusic = true;
@@ -24,6 +24,22 @@ window.onPlayMusic = function ()
 window.onPauseMusic = function () 
 {
     isPlayingMusic = false;
+}
+//Also resets cube location to 0,0,0
+window.onRestartMusic = function ()
+{
+    isPlayingMusic = true;
+
+    cubeRotation = 0.0;
+
+    XRotation = 0;
+    YRotation = 0;
+    ZRotation = 0;
+
+    priorX = 0;
+    priorY = 0;
+
+    distanceFromCamera = -5;
 }
 
 //Zoom in and out
@@ -59,13 +75,12 @@ function main()
     canvas.addEventListener("mousewheel", mouseWheel, false);
     canvas.addEventListener("pointerup", mouseUp, false);
 
+    //Mouse click
     function mouseDown(event)
     {
         isMouseDown = true;
         priorX = event.clientX;
         priorY = event.clientY;
-
-        //console.log(event)
     }
 
     function mouseUp()
@@ -84,8 +99,8 @@ function main()
         const deltaX = event.clientX - priorX;
         const deltaY = event.clientY - priorY;
 
-        XRotation += deltaX * 0.01;
-        YRotation += deltaY * 0.01;
+        XRotation += deltaY * 0.01;
+        YRotation += deltaX * 0.01;
 
         priorX = event.clientX;
         priorY = event.clientY;
@@ -188,16 +203,22 @@ function main()
     let then = 0;
     //draw repeatedly
     function render(now)
-    {
-        now *= 0.001; //convert to seconds
-        deltaTime = now - then;
+    {   
+        now *= 0.001; //convert to seconds 
+        
+        if(isPlayingMusic)
+        {        
+            deltaTime = now - then;
+            
+            cubeRotation += deltaTime;
+            XRotation += deltaTime * 2;
+            YRotation += deltaTime * 0.5;
+        }
+
         then = now;
 
-        drawScene(gl, programInfo, buffers, texture, cubeRotation, XRotation, YRotation, ZRotation, distanceFromCamera, isPlayingMusic);
-        if(isPlayingMusic)
-        {
-            cubeRotation += deltaTime;
-        }
+        drawScene(gl, programInfo, buffers, texture, cubeRotation, XRotation, YRotation, ZRotation, distanceFromCamera);
+
         requestAnimationFrame(render);
     }
     requestAnimationFrame(render);
