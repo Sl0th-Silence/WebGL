@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebGL Work</title>
@@ -14,7 +15,12 @@
     <script src="./webgl.js" type="module"></script>
 </head>
 <body>
-    <canvas id="gl-canvas" width="750" height="500"></canvas>
+    <canvas id="gl-canvas" width="750" height="500"></canvas> <br>
+    
+    <!-- Zoom buttons -->
+    <button id="zoombutton" onclick="zoomIn()">[+]</button>
+    <button id="zoombutton" onclick="zoomOut()">[-]</button>
+
 
     <h1>The Cube!</h1>
     <h3>Controls:</h3>
@@ -30,6 +36,7 @@
      <!-- buttons for player -->
       <button onclick="playVideo(), onPlayMusic()">|> Play</button>
       <button onclick="pauseVideo(), onPauseMusic()">|| Pause</button>
+      <button onclick="player.seekTo(8, true), onPlayMusic()">* Restart</button>
 
       <script>
         let tag = document.createElement('script');

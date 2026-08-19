@@ -26,6 +26,18 @@ window.onPauseMusic = function ()
     isPlayingMusic = false;
 }
 
+//Zoom in and out
+window.zoomIn = function ()
+{
+    distanceFromCamera++;
+}
+
+window.zoomOut = function () 
+{
+    distanceFromCamera--;
+}
+
+
 function main()
 {
     const canvas = document.querySelector("#gl-canvas");
