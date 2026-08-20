@@ -113,12 +113,13 @@ function main()
             cameraX += Math.cos(YRotation) * moveSpeed;
             cameraZ += Math.sin(YRotation) * moveSpeed;
         }
-        if(event.code === 'Space') {cameraY++;} //Up
-        if(event.code === 'ControlLeft') {cameraY--;} //Down
+        if(event.code === 'Space') {event.preventDefault(); cameraY++;} //Up
+        if(event.code === 'ControlLeft') {event.preventDefault(); cameraY--;} //Down
 
         //Reset with key R
         if(event.code === 'KeyR') 
         { 
+            canvas.blur();
             cubeRotation = 0.0;
 
             XRotation = 0;
