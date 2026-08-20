@@ -1,20 +1,28 @@
 import { initBuffers } from "./init-buffers.js";
 import { drawScene } from "./draw-scene.js";
 
-let squareRotation = 0.0;
+//Rotations
 let cubeRotation = 0.0;
 let deltaTime = 0;
 let XRotation = 0;
 let YRotation = 0;
 let ZRotation = 0;
 
-let distanceFromCamera = -5;
+//Translation (up down left right in out)
+let cameraX = 0;
+let cameraZ = 0;
+let cameraY = 0;
 
+let moveSpeed = 1;
+
+//Priors for pausing and resuming
 let priorX = 0;
 let priorY = 0;
 
+//Mouse click and drag / whether to animate while music is playing
 let isMouseDown = false;
 let isPlayingMusic = false;
+
 main();
 //On play, pause music and restart from HTML
 window.onPlayMusic = function () 
@@ -39,18 +47,18 @@ window.onRestartMusic = function ()
     priorX = 0;
     priorY = 0;
 
-    distanceFromCamera = -5;
+    cameraY = -5;
 }
 
 //Zoom in and out
 window.zoomIn = function ()
 {
-    distanceFromCamera++;
+    cameraY++;
 }
 
 window.zoomOut = function () 
 {
-    distanceFromCamera--;
+    cameraY--;
 }
 
 
@@ -74,10 +82,61 @@ function main()
     canvas.addEventListener("pointerdown", mouseDown, false);
     canvas.addEventListener("mousewheel", mouseWheel, false);
     canvas.addEventListener("pointerup", mouseUp, false);
+    canvas.addEventListener("keydown", keyDown, false);
+
+    //WASD Input keys
+    function keyDown(event)
+    {
+        if(event.code === 'KeyW')
+        {
+            //Forward
+            cameraX += Math.sin(YRotation) * moveSpeed;
+            cameraZ -= Math.cos(YRotation) * moveSpeed;
+        }
+        if(event.code === 'KeyS')
+        {
+            //Backwards
+            cameraX -= Math.sin(YRotation) * moveSpeed;
+            cameraZ += Math.cos(YRotation) * moveSpeed;
+        }
+        if(event.code === 'KeyA') 
+        {
+            // Left
+            cameraX -= Math.cos(YRotation) * moveSpeed;
+            cameraZ -= Math.sin(YRotation) * moveSpeed;
+        }
+
+        if(event.code === 'KeyD')
+        {
+            // Right
+            cameraX += Math.cos(YRotation) * moveSpeed;
+            cameraZ += Math.sin(YRotation) * moveSpeed;
+        }
+        if(event.code === 'Space') {cameraY++;} //Up
+        if(event.code === 'ControlLeft') {cameraY--;} //Down
+
+        //Reset with key R
+        if(event.code === 'KeyR') 
+        { 
+            cubeRotation = 0.0;
+
+            XRotation = 0;
+            YRotation = 0;
+            ZRotation = 0;
+
+            priorX = 0;
+            priorY = 0;
+
+            cameraX = 0;
+            cameraY = 0;
+            cameraZ = 0;
+        }
+    }
 
     //Mouse click
     function mouseDown(event)
     {
+        canvas.focus();
         isMouseDown = true;
         priorX = event.clientX;
         priorY = event.clientY;
@@ -91,15 +150,14 @@ function main()
     //x and y is a little bass awkwards
     function mouseMove(event)
     {
-        if(!isMouseDown)
+        if(document.activeElement !== canvas)
         {
             return;
         }
-
         const deltaX = event.clientX - priorX;
         const deltaY = event.clientY - priorY;
 
-        XRotation += deltaY * 0.01;
+        XRotation -= deltaY * 0.01;
         YRotation += deltaX * 0.01;
 
         priorX = event.clientX;
@@ -111,11 +169,11 @@ function main()
         //move cube close and far
         if (event.deltaY < 0)
         {
-            distanceFromCamera++;
+            cameraY++;
         }
         else if (event.deltaY > 0) 
         {
-            distanceFromCamera--;
+            cameraY--;
         }
     }
 
@@ -210,14 +268,29 @@ function main()
         {        
             deltaTime = now - then;
             
-            cubeRotation += deltaTime;
+            ZRotation += deltaTime;
             XRotation += deltaTime * 2;
+            XRotation = Math.max(
+                -Math.PI / 2 + 0.01,
+                Math.min(Math.PI / 2 - 0.01, XRotation)
+            );
             YRotation += deltaTime * 0.5;
         }
 
         then = now;
 
-        drawScene(gl, programInfo, buffers, texture, cubeRotation, XRotation, YRotation, ZRotation, distanceFromCamera);
+        drawScene(
+            gl, 
+            programInfo, 
+            buffers, 
+            texture, 
+            XRotation,          //Current rotation on X
+            YRotation,          //Current rotation on Y
+            ZRotation,          //Current rotation on Z
+            cameraY,            //Move in out
+            cameraX,            //Move left right
+            cameraZ,            //Move up down
+        );
 
         requestAnimationFrame(render);
     }

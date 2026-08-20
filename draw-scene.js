@@ -1,4 +1,15 @@
-function drawScene(gl, programInfo, buffers, texture, cubeRotation, XRotation, YRotation, ZRotation, distanceFromCamera)
+function drawScene(
+    gl, 
+    programInfo, 
+    buffers, 
+    texture, 
+    XRotation, 
+    YRotation, 
+    ZRotation, 
+    cameraY, 
+    cameraX,
+    cameraZ,
+)
 {
     //Clear to black with alpha of 1
     gl.clearColor(0.0, 0.0, 0.0, 1.0)
@@ -19,6 +30,8 @@ function drawScene(gl, programInfo, buffers, texture, cubeRotation, XRotation, Y
     // and we only want to see objects between 0.1 units
     // and 100 units away from the camera.
 
+    //This just defines the camera / perspective matrix. 
+
     const fieldOfView = 45 * (Math.PI / 180); //45 degrees in radians. The formula is ' Radians = degrees * (Math.PI / 180) '
     const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
     const zNear = 0.1;
@@ -29,37 +42,64 @@ function drawScene(gl, programInfo, buffers, texture, cubeRotation, XRotation, Y
     // as the destination to receive the result.
     mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
 
+    //This is the camera position and orientation
+    const cameraPosition = [
+        cameraX,
+        cameraY,
+        cameraZ
+    ];                                 //Where the camera is in the world
+    
+    const direction = [
+        Math.sin(YRotation) * Math.cos(XRotation),
+        Math.sin(XRotation),
+        -Math.cos(YRotation) * Math.cos(XRotation),
+    ]
+    const target = [
+        cameraPosition[0] + direction[0],
+        cameraPosition[1] + direction[1],
+        cameraPosition[2] + direction[2],
+    ];                                 //Where it is looking
+ 
+    const upVector = [0, 1, 0];        //Where is up!
+    const viewMatrix = mat4.create(); 
+    //Set look
+    mat4.lookAt(viewMatrix, cameraPosition, target, upVector);
+
+    //Move/Rotate the OBJECT(Cube)
     //Set drawing pos to the identity point, (center of screen)
-    const modelViewMatrix = mat4.create();
+    const modelMatrix = mat4.create();
 
-    //move drawing pos a bit to where we start drawing square
     mat4.translate(
-        modelViewMatrix, //Destination
-        modelViewMatrix, //matrix to be translated
-        [-0.0, 0.0, distanceFromCamera], //Amount to translate
-    );
-
+        modelMatrix,
+        modelMatrix,
+        [0, 0, -10]
+    )
     //Rotate the cube!
     mat4.rotate(
-        modelViewMatrix, // destination matrix
-        modelViewMatrix, // matrix to rotate
-        cubeRotation, // amount to rotate in radians
+        modelMatrix, // destination matrix
+        modelMatrix, // matrix to rotate
+        0, // amount to rotate in radians
         [0, 0, 1],
         ); // axis to rotate around (Z)
 
     mat4.rotate(
-        modelViewMatrix, // destination matrix
-        modelViewMatrix, // matrix to rotate
-        YRotation, // amount to rotate in radians
+        modelMatrix, // destination matrix
+        modelMatrix, // matrix to rotate
+        0, // amount to rotate in radians
         [0, 1, 0],
         ); // axis to rotate around (Y)
 
     mat4.rotate(
-        modelViewMatrix, // destination matrix
-        modelViewMatrix, // matrix to rotate
-        XRotation, // amount to rotate in radians
+        modelMatrix, // destination matrix
+        modelMatrix, // matrix to rotate
+        0, // amount to rotate in radians
         [1, 0, 0],
         ); // axis to rotate around (X)
+
+
+    //Combine views
+    const modelViewMatrix = mat4.create();
+    mat4.multiply(modelViewMatrix, viewMatrix, modelMatrix);
 
         //update code that builds uniform matrices to generate and give the shader a normal matrix
         //which is used to transform the normals appropriately to the orientation to the light souce

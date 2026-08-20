@@ -15,7 +15,7 @@
     <script src="./webgl.js" type="module"></script>
 </head>
 <body>
-    <canvas id="gl-canvas" width="750" height="500"></canvas> <br>
+    <canvas id="gl-canvas" width="750" height="500" tabindex="0"></canvas> <br>
     
     <!-- Zoom buttons -->
     <button id="zoombutton" onclick="zoomIn()">[+]</button>
@@ -25,9 +25,12 @@
     <h1>The Cube!</h1>
     <h3>Controls:</h3>
     <ul>
-        <li>Click and drag to rotate cube</li>
-        <li>If using a mouse, use the mouse wheel to zoom in and out</li>
-        <li>While the boss is speaking, the cube can not be controlled by you! Get back to work!</li>
+        <li>Click to set canvas focus</li>
+        <li>Use mouse to look around</li>
+        <li>WASD to move camera around</li>
+        <li>Space to go up and left CTRL to go down</li>
+        <li>Press 'R' to reset view</li>
+        <li>Press Play to hear tunes</li>
     </ul>
 
     <!-- youtube player -->
