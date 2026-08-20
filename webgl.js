@@ -47,7 +47,7 @@ window.onRestartMusic = function ()
     priorX = 0;
     priorY = 0;
 
-    cameraY = -5;
+    cameraY = 0;
 }
 
 //Zoom in and out
@@ -87,6 +87,7 @@ function main()
     //WASD Input keys
     function keyDown(event)
     {
+        if(event.code === 'Escape') { canvas.blur(); }
         if(event.code === 'KeyW')
         {
             //Forward
@@ -263,20 +264,6 @@ function main()
     function render(now)
     {   
         now *= 0.001; //convert to seconds 
-        
-        if(isPlayingMusic)
-        {        
-            deltaTime = now - then;
-            
-            ZRotation += deltaTime;
-            XRotation += deltaTime * 2;
-            XRotation = Math.max(
-                -Math.PI / 2 + 0.01,
-                Math.min(Math.PI / 2 - 0.01, XRotation)
-            );
-            YRotation += deltaTime * 0.5;
-        }
-
         then = now;
 
         drawScene(
