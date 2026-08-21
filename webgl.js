@@ -138,7 +138,16 @@ main();
 // = = = = = = = = = M A I N = = = = = = = = = //
 function main()
 {
-    updateCamera();
+
+    const clampView = (num, min, max) => 
+    {
+        if (num > max) {num = max};
+        if (num < min) {num = min};
+
+        return num;
+
+    }
+
     const canvas = document.querySelector("#gl-canvas");
     //Init gl context
     const gl = canvas.getContext("webgl");
@@ -155,20 +164,16 @@ function main()
     //Event Listeners
     canvas.addEventListener("pointermove", mouseMove, false);
     canvas.addEventListener("pointerdown", mouseDown, false);
-    canvas.addEventListener("pointerup", mouseUp, false);
+    document.onpointerlockchange = () => {
+        if(!document.pointerLockElement) {canvas.blur();}
+    }
 
     //Mouse click
     function mouseDown(event)
     {
-        canvas.focus();
-        isMouseDown = true;
-        priorX = event.clientX;
-        priorY = event.clientY;
-    }
-
-    function mouseUp()
-    {
-        isMouseDown = false;
+        canvas.requestPointerLock();
+        priorX = event.movementX;
+        priorY = event.movementY;
     }
 
     //x and y is a little bass awkwards
@@ -178,14 +183,16 @@ function main()
         {
             return;
         }
-        const deltaX = event.clientX - priorX;
-        const deltaY = event.clientY - priorY;
+        const deltaX = event.movementX;
+        const deltaY = event.movementY;
 
+        //Clamp XRotation 1.5 - -1.5
         XRotation -= deltaY * 0.01;
+        XRotation = clampView(XRotation, -1.5, 1.5);
         YRotation += deltaX * 0.01;
 
-        priorX = event.clientX;
-        priorY = event.clientY;
+        priorX = event.movementX;
+        priorY = event.movementY;
     }
 
     //Vertex Shader 
@@ -266,7 +273,7 @@ function main()
     const buffers = initBuffers(gl);
 
     //Texture loading
-    const texture = loadTexture(gl, "companionCube.png");
+    const texture = loadTexture(gl, "Concrete.jpg");
 
     let then = 0;
 

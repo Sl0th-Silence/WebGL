@@ -72,29 +72,8 @@ function drawScene(
     mat4.translate(
         modelMatrix,
         modelMatrix,
-        [0, 0, -10]
+        [0, -4, -10]
     )
-    //Rotate the cube!
-    mat4.rotate(
-        modelMatrix, // destination matrix
-        modelMatrix, // matrix to rotate
-        0, // amount to rotate in radians
-        [0, 0, 1],
-        ); // axis to rotate around (Z)
-
-    mat4.rotate(
-        modelMatrix, // destination matrix
-        modelMatrix, // matrix to rotate
-        0, // amount to rotate in radians
-        [0, 1, 0],
-        ); // axis to rotate around (Y)
-
-    mat4.rotate(
-        modelMatrix, // destination matrix
-        modelMatrix, // matrix to rotate
-        0, // amount to rotate in radians
-        [1, 0, 0],
-        ); // axis to rotate around (X)
 
 
     //Combine views
