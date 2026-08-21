@@ -37,6 +37,7 @@ canvas.addEventListener("keydown", (e) => {
 
     if(e.code === "KeyR")
     {
+        canvas.blur();
         cubeRotation = 0.0;
         XRotation = 0;
         YRotation = 0;
