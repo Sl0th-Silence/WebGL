@@ -1,6 +1,18 @@
 import { initBuffers } from "./init-buffers.js";
 import { drawScene } from "./draw-scene.js";
 
+// = = = = = = = = = V A R I A B L E S = = = = = = = = = //
+const keys = {};
+const canvas = document.querySelector("#gl-canvas");
+
+//Priors for pausing and resuming
+let priorX = 0;
+let priorY = 0;
+
+//Mouse click and drag / whether to animate while music is playing
+let isMouseDown = false;
+let isPlayingMusic = false;
+
 //Rotations
 let cubeRotation = 0.0;
 let deltaTime = 0;
@@ -13,17 +25,67 @@ let cameraX = 0;
 let cameraZ = 0;
 let cameraY = 0;
 
-let moveSpeed = 1;
+let moveSpeed = .2;
+// = = = = = = = = = E N D   V A R I A B L E S = = = = = = = = = //
+// = = = = = = = = = I N P U T S  &  A C T I O N S = = = = = = = = = //
+// WASD inputs loop check //
+canvas.addEventListener("keydown", (e) => {
+    keys[e.code] = true;
 
-//Priors for pausing and resuming
-let priorX = 0;
-let priorY = 0;
+    if(e.code === "Escape") { canvas.blur(); }
+    if(e.code === "Space" || e.code === "ControlLeft") {e.preventDefault();}
 
-//Mouse click and drag / whether to animate while music is playing
-let isMouseDown = false;
-let isPlayingMusic = false;
+    if(e.code === "KeyR")
+    {
+        cubeRotation = 0.0;
+        XRotation = 0;
+        YRotation = 0;
+        ZRotation = 0;
+        priorX = 0;
+        priorY = 0;
+        cameraX = 0;
+        cameraY = 0;
+        cameraZ = 0;
+    }
+});
 
-main();
+canvas.addEventListener("keyup", (e) => {
+    keys[e.code] = false;
+});
+
+function updateCamera()
+{
+    if (keys["KeyW"]) {
+        cameraX += Math.sin(YRotation) * moveSpeed;
+        cameraZ -= Math.cos(YRotation) * moveSpeed;
+    }
+
+    if (keys["KeyS"]) {
+        cameraX -= Math.sin(YRotation) * moveSpeed;
+        cameraZ += Math.cos(YRotation) * moveSpeed;
+    }
+
+    if (keys["KeyA"]) {
+        cameraX -= Math.cos(YRotation) * moveSpeed;
+        cameraZ -= Math.sin(YRotation) * moveSpeed;
+    }
+
+    if (keys["KeyD"]) {
+        cameraX += Math.cos(YRotation) * moveSpeed;
+        cameraZ += Math.sin(YRotation) * moveSpeed;
+    }
+
+    if (keys["Space"]) {
+        cameraY += moveSpeed;
+    }
+
+    if (keys["ControlLeft"]) {
+        cameraY -= moveSpeed;
+    }
+}
+// END WASD inputs loop check //
+
+
 //On play, pause music and restart from HTML
 window.onPlayMusic = function () 
 {
@@ -60,10 +122,22 @@ window.zoomOut = function ()
 {
     cameraY--;
 }
+// = = = = = = = = = E N D  I N P U T S  &  A C T I O N S = = = = = = = = = //
 
 
+
+
+
+main();
+
+
+
+
+
+// = = = = = = = = = M A I N = = = = = = = = = //
 function main()
 {
+    updateCamera();
     const canvas = document.querySelector("#gl-canvas");
     //Init gl context
     const gl = canvas.getContext("webgl");
@@ -77,63 +151,10 @@ function main()
         return;
     }
 
-    //Mouse inputs
+    //Event Listeners
     canvas.addEventListener("pointermove", mouseMove, false);
     canvas.addEventListener("pointerdown", mouseDown, false);
-    canvas.addEventListener("mousewheel", mouseWheel, false);
     canvas.addEventListener("pointerup", mouseUp, false);
-    canvas.addEventListener("keydown", keyDown, false);
-
-    //WASD Input keys
-    function keyDown(event)
-    {
-        if(event.code === 'Escape') { canvas.blur(); }
-        if(event.code === 'KeyW')
-        {
-            //Forward
-            cameraX += Math.sin(YRotation) * moveSpeed;
-            cameraZ -= Math.cos(YRotation) * moveSpeed;
-        }
-        if(event.code === 'KeyS')
-        {
-            //Backwards
-            cameraX -= Math.sin(YRotation) * moveSpeed;
-            cameraZ += Math.cos(YRotation) * moveSpeed;
-        }
-        if(event.code === 'KeyA') 
-        {
-            // Left
-            cameraX -= Math.cos(YRotation) * moveSpeed;
-            cameraZ -= Math.sin(YRotation) * moveSpeed;
-        }
-
-        if(event.code === 'KeyD')
-        {
-            // Right
-            cameraX += Math.cos(YRotation) * moveSpeed;
-            cameraZ += Math.sin(YRotation) * moveSpeed;
-        }
-        if(event.code === 'Space') {event.preventDefault(); cameraY++;} //Up
-        if(event.code === 'ControlLeft') {event.preventDefault(); cameraY--;} //Down
-
-        //Reset with key R
-        if(event.code === 'KeyR') 
-        { 
-            canvas.blur();
-            cubeRotation = 0.0;
-
-            XRotation = 0;
-            YRotation = 0;
-            ZRotation = 0;
-
-            priorX = 0;
-            priorY = 0;
-
-            cameraX = 0;
-            cameraY = 0;
-            cameraZ = 0;
-        }
-    }
 
     //Mouse click
     function mouseDown(event)
@@ -165,20 +186,6 @@ function main()
         priorX = event.clientX;
         priorY = event.clientY;
     }
-
-    function mouseWheel(event)
-    {
-        //move cube close and far
-        if (event.deltaY < 0)
-        {
-            cameraY++;
-        }
-        else if (event.deltaY > 0) 
-        {
-            cameraY--;
-        }
-    }
-
 
     //Vertex Shader 
     const vsSource = `
@@ -261,9 +268,13 @@ function main()
     const texture = loadTexture(gl, "companionCube.png");
 
     let then = 0;
+
+
     //draw repeatedly
+    //THIS IS THE MAIN GAME LOOP//
     function render(now)
     {   
+        updateCamera();
         now *= 0.001; //convert to seconds 
         then = now;
 
