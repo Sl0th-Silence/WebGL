@@ -140,7 +140,6 @@ export function initWebGL(canvas)
     };
 
     function keyUp(event){
-        console.log("key up")
         keys[event.code] = false;
     };
 
@@ -258,7 +257,6 @@ export function initWebGL(canvas)
                 texture, 
                 XRotation,          //Current rotation on X
                 YRotation,          //Current rotation on Y
-                ZRotation,          //Current rotation on Z
                 cameraY,            //Move in out
                 cameraX,            //Move left right
                 cameraZ,            //Move up down

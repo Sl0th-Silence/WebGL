@@ -2,7 +2,6 @@
 function initBuffers(gl)
 {
     const positionBuffer = initPositionBuffer(gl);
-    //const colorBuffer = initColorBuffer(gl);
     const indexBuffer = initIndexBuffer(gl);
     const textureBuffer = initTextureBuffer(gl);
     const normalBuffer = initNormalBuffer(gl);
@@ -10,7 +9,6 @@ function initBuffers(gl)
     return {
         position: positionBuffer,
         normal: normalBuffer,
-        //color: colorBuffer,
         indices: indexBuffer,
         texture: textureBuffer,
     };
@@ -53,32 +51,6 @@ function initPositionBuffer(gl)
 
     return positionBuffer;
 
-}
-
-function initColorBuffer(gl)
-{
-    const faceColors = [
-    [1.0, 1.0, 1.0, 1.0], // Front face: white
-    [1.0, 0.0, 0.0, 1.0], // Back face: red
-    [0.0, 1.0, 0.0, 1.0], // Top face: green
-    [0.0, 0.0, 1.0, 1.0], // Bottom face: blue
-    [1.0, 1.0, 0.0, 1.0], // Right face: yellow
-    [1.0, 0.0, 1.0, 1.0], // Left face: purple
-    ];
-
-    let colors = [];
-
-    for (const c of faceColors)
-    {
-        colors = colors.concat(c, c, c, c);
-    }
-
-    const colorBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors),
-    gl.STATIC_DRAW);
-
-    return colorBuffer;
 }
 
 function initTextureBuffer(gl) {

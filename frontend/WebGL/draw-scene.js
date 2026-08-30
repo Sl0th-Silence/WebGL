@@ -6,7 +6,6 @@ function drawScene(
     texture, 
     XRotation, 
     YRotation, 
-    ZRotation, 
     cameraY, 
     cameraX,
     cameraZ,
@@ -156,27 +155,6 @@ function setPositionAttribute(gl, buffers, programInfo)
     );
 
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
-}
-
-function setColorAttribute(gl, buffers, programInfo)
-{
-    const numComponents = 4;
-    const type = gl.FLOAT;
-    const normalize = false;
-    const stride = 0;
-    const offset = 0;
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.color);
-    gl.vertexAttribPointer(
-        programInfo.attribLocations.vertexColor,
-        numComponents,
-        type,
-        normalize,
-        stride,
-        offset,
-    );
-
-    gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor);
 }
 
 function setTextureAttribute(gl, buffers, programInfo)

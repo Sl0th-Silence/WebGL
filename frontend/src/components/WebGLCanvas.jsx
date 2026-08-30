@@ -26,7 +26,7 @@ export default function WebGLCanvas()
     }, []);
 
     return <div id="main_page">
-        <h2 id="title">Jay Mills - Portfolio</h2>
+        <h2 id="title">Jay Mills</h2>
         <canvas ref={canvasRef} width={600} height={400} />
         <ul id="webgl-about-list">
             <li>Click screen above to focus and allow input.</li>
