@@ -1,14 +1,15 @@
 #title {
-  color: aliceblue;
   font-family: monospace;
-  font-size: 25px;
+  letter-spacing: 25%;
+  text-underline-offset: 5px;
+  text-decoration: underline 2px;
+  font-size: 30px;
   list-style-type: none;
   text-align: left;
   padding: 2%;
 }
 
 #webgl-about-list {
-  color: aliceblue;
   font-family: monospace;
   font-size: larger;
   list-style-type: none;
@@ -16,5 +17,17 @@
 }
 
 .header {
-  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+ol {
+  color: #08060d;
 }

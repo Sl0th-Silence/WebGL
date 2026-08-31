@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { initWebGL } from "../../WebGL/webgl";
 
-export default function WebGLCanvas()
+export default function WebGLCanvas({header})
 {
     const canvasRef = useRef(null);
 
@@ -26,14 +26,19 @@ export default function WebGLCanvas()
     }, []);
 
     return <div id="main_page">
-        <h2 id="title">Jay Mills</h2>
-        <canvas ref={canvasRef} width={600} height={400} />
+        {header}
+        <canvas
+        ref={canvasRef} 
+        width={1000} 
+        height={600}
+        style={{borderRadius: "20px", border: "3px solid grey"}}
+        />
         <ul id="webgl-about-list">
-            <li>Click screen above to focus and allow input.</li>
-            <li>Press Esc to exit focus.</li>
-            <br />
-            <li>WASD to move around and Mouse to look.</li>
-            <li>Space bar to go up and Left Ctrl to go down.</li>
+        <li>Click screen above to focus and allow input.</li>
+        <li>Press Esc to exit focus.</li>
+        <br />
+        <li>WASD to move around and Mouse to look.</li>
+        <li>Space bar to go up and Left Ctrl to go down.</li>
         </ul>
-        </div>
+    </div>
 }

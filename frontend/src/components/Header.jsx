@@ -1,10 +1,12 @@
 export default function Header()
 {
     return <div class="header">
-        <h1>Jay Mills</h1>
+        <h2 id="title">Jay Mills</h2>
         <select name="menu" id="drop-menu">
-            <option value="">one</option>
-            <option value="">two</option>
+            <option value="">Home</option>
+            <option value="">Personal Projects</option>
+            <option value="">Work Experience</option>
+            <option value="">About Me</option>
         </select>
     </div>
 }

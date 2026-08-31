@@ -6,7 +6,7 @@ function App() {
 
   return (
     <>
-      <WebGLCanvas header={Header} />
+      <WebGLCanvas header={<Header />} />
     </>
   )
 }
